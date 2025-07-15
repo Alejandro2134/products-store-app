@@ -4,8 +4,8 @@ import { firstValueFrom } from 'rxjs';
 import {
   PaymentRequest,
   PaymentResponse,
-} from '@infrastructure/integrations/payments/wompi/api/PaymentAPI';
-import { Mapper } from '@infrastructure/integrations/payments/wompi/mappers/Mapper';
+} from '@infrastructure/integrations/payments/api/PaymentAPI';
+import { Mapper } from '@infrastructure/integrations/payments/mappers/Mapper';
 import { Payment } from '@domain/entities/Payment';
 import { randomUUID, createHash } from 'crypto';
 
@@ -19,11 +19,11 @@ export class PaymentGatewayAdapter
   async startPayment(paymentInfo: Payment): Promise<Payment> {
     const { data } = await firstValueFrom(
       this.httpService.post<PaymentResponse, PaymentRequest>(
-        `${process.env.WOMPI_BASE_URL}/v1/transactions`,
+        `${process.env.PAYMENT_BASE_URL}/v1/transactions`,
         this.fromDomainToAPITransactions(paymentInfo),
         {
           headers: {
-            Authorization: `Bearer ${process.env.WOMPI_PUBLIC_API_KEY}`,
+            Authorization: `Bearer ${process.env.PAYMENT_PUBLIC_API_KEY}`,
           },
         },
       ),
@@ -36,7 +36,7 @@ export class PaymentGatewayAdapter
     const reference = randomUUID();
 
     return {
-      acceptance_token: `${process.env.WOMPI_ACCEPTANCE_TOKEN}`,
+      acceptance_token: `${process.env.PAYMENT_ACCEPTANCE_TOKEN}`,
       amount_in_cents: domain.getAmount(),
       currency: domain.getCurrency(),
       signature: this.generateSignature(
@@ -81,7 +81,7 @@ export class PaymentGatewayAdapter
   }
 
   generateSignature(reference: string, amount: number, currency: string) {
-    const data = `${reference}${amount}${currency}${process.env.WOMPI_INTEGRITY_SECET}`;
+    const data = `${reference}${amount}${currency}${process.env.PAYMENT_INTEGRITY_SECET}`;
     return createHash('sha256').update(data).digest('hex');
   }
 }
