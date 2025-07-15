@@ -7,11 +7,11 @@ interface IProductDTO {
 }
 
 export class ProductDTO {
-  private id: number;
-  private stock: number;
-  private price: number;
-  private name: string;
-  private description: string;
+  id: number;
+  stock: number;
+  price: number;
+  name: string;
+  description: string;
 
   constructor(item: IProductDTO) {
     this.id = item.id;

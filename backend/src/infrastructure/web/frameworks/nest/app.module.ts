@@ -7,11 +7,11 @@ import { Delivery } from '@infrastructure/persistency/orm/sequelize/models/Deliv
 import { Customer } from '@infrastructure/persistency/orm/sequelize/models/Customer';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { CustomersModule } from '@infrastructure/web/frameworks/nest/customers/customers.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    ProductsModule,
     SequelizeModule.forRoot({
       dialect: 'postgres',
       host: process.env.DB_HOST || 'localhost',
@@ -22,6 +22,8 @@ import { HttpModule } from '@nestjs/axios';
       models: [Product, Transaction, Delivery, Customer],
     }),
     HttpModule,
+    ProductsModule,
+    CustomersModule,
   ],
 })
 export class AppModule {}
