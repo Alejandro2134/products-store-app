@@ -14,8 +14,8 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      price: {
-        type: Sequelize.DECIMAL(10, 2),
+      price_in_cents: {
+        type: Sequelize.BIGINT,
         allowNull: false,
       },
       stock: {
@@ -25,6 +25,11 @@ module.exports = {
       description: {
         type: Sequelize.TEXT,
         allowNull: true,
+      },
+      currency: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 'COP',
       },
       created_at: {
         allowNull: false,

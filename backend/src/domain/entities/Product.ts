@@ -1,24 +1,31 @@
-interface IProduct {
+export interface IProduct {
   id: number;
   stock: number;
-  price: number;
+  priceInCents: number;
   name: string;
   description: string;
+  currency: string;
+}
+
+export interface IProductUpdate {
+  stock?: number;
 }
 
 export class Product {
   private id: number;
   private stock: number;
-  private price: number;
+  private priceInCents: number;
   private name: string;
   private description: string;
+  private currency: string;
 
   constructor(item: IProduct) {
     this.id = item.id;
     this.stock = item.stock;
-    this.price = item.price;
+    this.priceInCents = item.priceInCents;
     this.name = item.name;
     this.description = item.description;
+    this.currency = item.currency;
   }
 
   getId(): number {
@@ -29,8 +36,8 @@ export class Product {
     return this.stock;
   }
 
-  getPrice(): number {
-    return this.price;
+  getPriceInCents(): number {
+    return this.priceInCents;
   }
 
   getName(): string {
@@ -39,5 +46,22 @@ export class Product {
 
   getDescription(): string {
     return this.description;
+  }
+
+  getCurrency(): string {
+    return this.currency;
+  }
+
+  reduceStock(
+    quantity: number,
+  ): { success: true } | { success: false; reason: string } {
+    if (this.stock < quantity)
+      return {
+        success: false,
+        reason: `Insufficient stock. Available: ${this.stock}`,
+      };
+
+    this.stock -= quantity;
+    return { success: true };
   }
 }

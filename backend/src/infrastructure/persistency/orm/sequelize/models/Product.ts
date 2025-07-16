@@ -18,14 +18,17 @@ export class Product extends Model {
   @Column({ allowNull: false })
   declare name: string;
 
-  @Column({ allowNull: false, type: DataType.DECIMAL(10, 2) })
-  declare price: number;
+  @Column({ allowNull: false, type: DataType.BIGINT })
+  declare price_in_cents: number;
 
   @Column({ allowNull: false })
   declare stock: number;
 
   @Column({ allowNull: true, type: DataType.TEXT })
   declare description: string;
+
+  @Column({ allowNull: false, defaultValue: 'COP' })
+  declare currency: string;
 
   @CreatedAt
   declare created_at: Date;

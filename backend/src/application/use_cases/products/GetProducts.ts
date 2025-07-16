@@ -19,8 +19,9 @@ export class GetProducts
       id: domain.getId(),
       description: domain.getDescription(),
       name: domain.getName(),
-      price: domain.getPrice(),
+      price_in_cents: domain.getPriceInCents(),
       stock: domain.getStock(),
+      currency: domain.getCurrency(),
     });
   }
 }
