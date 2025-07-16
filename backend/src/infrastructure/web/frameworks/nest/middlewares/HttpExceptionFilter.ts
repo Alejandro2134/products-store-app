@@ -1,4 +1,6 @@
 import { AlreadyExistsError } from '@application/errors/AlreadyExistsError';
+import { BadRequestError } from '@application/errors/BadRequestError';
+import { NotFoundError } from '@application/errors/NotFundError';
 import {
   ArgumentsHost,
   Catch,
@@ -18,6 +20,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof AlreadyExistsError) {
       status = HttpStatus.CONFLICT;
+      message = exception.message;
+    } else if (exception instanceof NotFoundError) {
+      status = HttpStatus.NOT_FOUND;
+      message = exception.message;
+    } else if (exception instanceof BadRequestError) {
+      status = HttpStatus.BAD_REQUEST;
       message = exception.message;
     } else if (exception instanceof Error) {
       message = exception.message;
