@@ -36,6 +36,7 @@ export class CreateCustomer
         city: domain.getAddress().city,
         country: domain.getAddress().country,
         phone_number: domain.getAddress().phoneNumber,
+        region: domain.getAddress().region,
       },
       email: domain.getEmail(),
       full_name: domain.getFullName(),
@@ -50,10 +51,10 @@ export class CreateCustomer
         city: dto.address.city,
         country: dto.address.country,
         phoneNumber: dto.address.phone_number,
+        region: dto.address.region,
       },
       email: dto.email,
       fullName: dto.full_name,
-      id: 0,
     });
   }
 }

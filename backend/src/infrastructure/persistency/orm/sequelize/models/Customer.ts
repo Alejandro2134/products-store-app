@@ -32,6 +32,9 @@ export class Customer extends Model {
   @Column({ allowNull: false })
   declare phone_number: string;
 
+  @Column({ allowNull: false })
+  declare region: string;
+
   @CreatedAt
   declare created_at: Date;
 

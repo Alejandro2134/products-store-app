@@ -7,3 +7,7 @@ export interface CreateCustomerPort {
 export interface GetCustomersPort {
   execute(filter: ICustomerFilter): Promise<CustomerDTO[]>;
 }
+
+export interface GetCustomerByIdPort {
+  execute(id: number, t?: unknown): Promise<CustomerDTO>;
+}

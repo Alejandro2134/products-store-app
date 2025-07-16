@@ -1,20 +1,23 @@
-import { ICustomerFilter, CustomerDTO } from '@application/dto/Customer';
+import { CustomerDTO } from '@application/dto/Customer';
+import { NotFoundError } from '@application/errors/NotFundError';
 import { MapperDomain } from '@application/mappers/Mapper';
-import { GetCustomersPort } from '@application/ports/in/CustomerPorts';
+import { GetCustomerByIdPort } from '@application/ports/in/CustomerPorts';
 import { Customer } from '@domain/entities/Customer';
 import { CustomerPort } from '@domain/ports/out/CustomerPort';
 
-export class GetCustomers
-  implements GetCustomersPort, MapperDomain<Customer, CustomerDTO>
+export class GetCustomerById
+  implements MapperDomain<Customer, CustomerDTO>, GetCustomerByIdPort
 {
   constructor(private readonly customerAdapter: CustomerPort) {}
 
-  async execute(filter: ICustomerFilter): Promise<CustomerDTO[]> {
-    const customers = await this.customerAdapter.findAll(filter);
-    return customers.map(this.fromDomainToDTO);
+  async execute(id: number, t?: unknown): Promise<CustomerDTO> {
+    const customer = await this.customerAdapter.findById(id, t);
+    if (!customer) throw new NotFoundError(`Customer with id ${id} not found`);
+
+    return this.fromDomainToDTO(customer);
   }
 
-  fromDomainToDTO(this: void, domain: Customer): CustomerDTO {
+  fromDomainToDTO(domain: Customer): CustomerDTO {
     return new CustomerDTO({
       address: {
         address_line_1: domain.getAddress().addressLine1,

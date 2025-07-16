@@ -1,8 +1,8 @@
-interface ICustomer {
+export interface ICustomer {
   email: string;
   fullName: string;
   address: ICustomerAddress;
-  id: number;
+  id?: number;
 }
 
 export interface ICustomerFilter {
@@ -14,10 +14,11 @@ interface ICustomerAddress {
   country: string;
   city: string;
   phoneNumber: string;
+  region: string;
 }
 
 export class Customer {
-  private id: number;
+  private id?: number;
   private email: string;
   private fullName: string;
   private address: ICustomerAddress;
@@ -31,6 +32,7 @@ export class Customer {
       country: item.address.country,
       city: item.address.city,
       phoneNumber: item.address.phoneNumber,
+      region: item.address.region,
     };
   }
 
@@ -47,6 +49,6 @@ export class Customer {
   }
 
   getId(): number {
-    return this.id;
+    return this.id || 0;
   }
 }

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-interface ICustomerDTO {
+export interface ICustomerDTO {
   id?: number;
   email: string;
   full_name: string;
@@ -23,6 +23,9 @@ class CustomerAddress {
 
   @ApiProperty({ example: '573143648188' })
   phone_number: string;
+
+  @ApiProperty({ example: 'Cundinamarca' })
+  region: string;
 }
 
 export class CustomerDTO {
@@ -48,6 +51,7 @@ export class CustomerDTO {
       city: item.address.city,
       country: item.address.country,
       phone_number: item.address.phone_number,
+      region: item.address.region,
     };
   }
 }
