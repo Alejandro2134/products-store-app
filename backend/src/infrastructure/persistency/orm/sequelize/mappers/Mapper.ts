@@ -5,3 +5,7 @@ export interface MapperModel<Domain, Model> {
 export interface MapperDomain<Domain, Model> {
   fromDomainToModel(domain: Domain): Model;
 }
+
+export interface MapperPartialDomain<Domain, Model> {
+  fromPartialDomainToModel(domain: Partial<Domain>): Model;
+}

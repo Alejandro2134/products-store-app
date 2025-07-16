@@ -8,6 +8,7 @@ import { Customer } from '@infrastructure/persistency/orm/sequelize/models/Custo
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { CustomersModule } from '@infrastructure/web/frameworks/nest/customers/customers.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CustomersModule } from '@infrastructure/web/frameworks/nest/customers/c
     HttpModule,
     ProductsModule,
     CustomersModule,
+    TransactionsModule,
   ],
 })
 export class AppModule {}

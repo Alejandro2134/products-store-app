@@ -4,11 +4,16 @@ import { firstValueFrom } from 'rxjs';
 import {
   PaymentRequest,
   PaymentResponse,
+  PaymentResponseError,
 } from '@infrastructure/integrations/payments/api/PaymentAPI';
 import { Mapper } from '@infrastructure/integrations/payments/mappers/Mapper';
 import { Payment } from '@domain/entities/Payment';
 import { randomUUID, createHash } from 'crypto';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { PaymentError } from '@application/errors/PaymentError';
 
+@Injectable()
 export class PaymentGatewayAdapter
   implements
     PaymentGatewayPort,
@@ -17,19 +22,31 @@ export class PaymentGatewayAdapter
   constructor(private readonly httpService: HttpService) {}
 
   async startPayment(paymentInfo: Payment): Promise<Payment> {
-    const { data } = await firstValueFrom(
-      this.httpService.post<PaymentResponse, PaymentRequest>(
-        `${process.env.PAYMENT_BASE_URL}/v1/transactions`,
-        this.fromDomainToAPITransactions(paymentInfo),
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.PAYMENT_PUBLIC_API_KEY}`,
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.post<PaymentResponse, PaymentRequest>(
+          `${process.env.PAYMENT_BASE_URL}/v1/transactions`,
+          this.fromDomainToAPITransactions(paymentInfo),
+          {
+            headers: {
+              Authorization: `Bearer ${process.env.PAYMENT_PUBLIC_API_KEY}`,
+            },
           },
-        },
-      ),
-    );
+        ),
+      );
 
-    return this.fromAPITransactionsToDomain(data);
+      return this.fromAPITransactionsToDomain(data);
+    } catch (error) {
+      if (
+        axios.isAxiosError(error) &&
+        (error.response?.data as PaymentResponseError)?.error
+      ) {
+        const paymentError = error.response?.data as PaymentResponseError;
+        console.error(paymentError);
+      }
+
+      throw new PaymentError();
+    }
   }
 
   fromDomainToAPITransactions(domain: Payment): PaymentRequest {
@@ -77,6 +94,8 @@ export class PaymentGatewayAdapter
       customerPhoneNumber: api.data.shipping_address.phone_number.toString(),
       method: api.data.payment_method.type,
       token: '',
+      id: api.data.id,
+      reference: api.data.reference,
     });
   }
 

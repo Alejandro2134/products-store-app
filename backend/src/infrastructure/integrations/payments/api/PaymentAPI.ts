@@ -47,3 +47,10 @@ export type PaymentResponse = {
     payment_link_id: null;
   };
 };
+
+export type PaymentResponseError = {
+  error: {
+    type: string;
+    messages: Record<string, string[]>;
+  };
+};

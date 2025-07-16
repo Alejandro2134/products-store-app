@@ -1,4 +1,5 @@
 interface IPayment {
+  id?: string;
   customerFullName: string;
   customerEmail: string;
   amount: number;
@@ -10,9 +11,11 @@ interface IPayment {
   customerPhoneNumber: string;
   method: string;
   token: string;
+  reference?: string;
 }
 
 export class Payment {
+  private id?: string;
   private customerFullName: string;
   private customerEmail: string;
   private amount: number;
@@ -25,6 +28,7 @@ export class Payment {
   private status: string;
   private method: string;
   private token: string;
+  private reference?: string;
 
   constructor(item: IPayment) {
     this.customerFullName = item.customerFullName;
@@ -39,6 +43,8 @@ export class Payment {
     this.status = 'PENDING';
     this.method = item.method;
     this.token = item.token;
+    this.id = item.id;
+    this.reference = item.reference;
   }
 
   getCustomerFullName(): string {
@@ -87,5 +93,13 @@ export class Payment {
 
   getToken(): string {
     return this.token;
+  }
+
+  getId() {
+    return this.id;
+  }
+
+  getReference() {
+    return this.reference;
   }
 }
