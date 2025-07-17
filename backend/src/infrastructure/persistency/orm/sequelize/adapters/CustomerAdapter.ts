@@ -37,7 +37,10 @@ export class CustomerAdapter
 
       if (filter.email) where['email'] = filter.email;
 
-      const res = await this.customerModel.findAll({ where });
+      const res = await this.customerModel.findAll({
+        where,
+        order: [['id', 'ASC']],
+      });
       return res.map(this.fromModelToDomain);
     } catch (error) {
       console.error(error);

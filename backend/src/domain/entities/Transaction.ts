@@ -75,6 +75,10 @@ export class Transaction {
     return this.reference;
   }
 
+  getId() {
+    return this.id;
+  }
+
   setPaymentGatewayTransactionId(id: string) {
     this.paymentGatewayTransactionId = id;
   }

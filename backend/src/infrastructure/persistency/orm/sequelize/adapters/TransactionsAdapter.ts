@@ -20,6 +20,19 @@ export class TransactionAdapter
     private transactionModel: typeof TransactionModel,
   ) {}
 
+  async findById(id: number): Promise<Transaction | null> {
+    try {
+      const transaction = await this.transactionModel.findByPk(id, {
+        include: [Customer, Product],
+      });
+      if (transaction) return this.fromModelToDomain(transaction);
+      return transaction;
+    } catch (error) {
+      console.error(error);
+      throw new DatabaseError();
+    }
+  }
+
   async create(item: Transaction, t?: DBTransaction): Promise<Transaction> {
     try {
       const transaction = this.fromDomainToModel(item);
@@ -32,6 +45,7 @@ export class TransactionAdapter
 
       await createdTransaction.reload({
         include: [Customer, Product],
+        transaction: t,
       });
 
       return this.fromModelToDomain(createdTransaction);
@@ -80,7 +94,7 @@ export class TransactionAdapter
       productId: model.product_id,
       status: model.status,
       paymentGatewayTransactionId: model.payment_gateway_transaction_id,
-      amountInCents: model.amount_in_cents,
+      amountInCents: Number(model.amount_in_cents),
       productAmount: model.product_amount,
       reference: model.reference,
     });

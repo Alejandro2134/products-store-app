@@ -24,6 +24,7 @@ export class GetProductById
       name: domain.getName(),
       price_in_cents: domain.getPriceInCents(),
       stock: domain.getStock(),
+      id: domain.getId(),
     });
   }
 }

@@ -54,3 +54,50 @@ export type PaymentResponseError = {
     messages: Record<string, string[]>;
   };
 };
+
+type PaymentMethods = {
+  name: string;
+  payment_processors: { name: string }[];
+};
+
+export type AcceptanceTokenResponse = {
+  data: {
+    id: number;
+    name: string;
+    email: string;
+    contact_name: string;
+    phone_number: string;
+    active: boolean;
+    logo_url: null;
+    legal_name: string;
+    legal_id_type: string;
+    legal_id: string;
+    public_key: string;
+    accepted_currencies: string[];
+    fraud_javascript_key: null;
+    fraud_groups: [];
+    accepted_payment_methods: string[];
+    payment_methods: PaymentMethods[];
+    presigned_acceptance: {
+      acceptance_token: string;
+      permalink: string;
+      type: string;
+    };
+    presigned_personal_data_auth: {
+      acceptance_token: string;
+      permalink: string;
+      type: string;
+    };
+    click_to_pay_dpa_id: null;
+    mcc: null;
+    acquirer_id: null;
+  };
+  meta: unknown;
+};
+
+export type AcceptanceTokenError = {
+  error: {
+    type: string;
+    reason: string;
+  };
+};

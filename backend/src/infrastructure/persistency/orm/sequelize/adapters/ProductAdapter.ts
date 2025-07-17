@@ -64,7 +64,9 @@ export class ProductAdapter
 
   async findAll(): Promise<Product[]> {
     try {
-      const products = await this.productModel.findAll();
+      const products = await this.productModel.findAll({
+        order: [['id', 'ASC']],
+      });
       return products.map(this.fromModelToDomain);
     } catch (error) {
       console.error(error);
@@ -77,7 +79,7 @@ export class ProductAdapter
       id: model.id,
       description: model.description,
       name: model.name,
-      priceInCents: model.price_in_cents,
+      priceInCents: Number(model.price_in_cents),
       stock: model.stock,
       currency: model.currency,
     });

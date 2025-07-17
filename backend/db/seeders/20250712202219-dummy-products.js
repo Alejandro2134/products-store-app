@@ -6,13 +6,13 @@ module.exports = {
     return queryInterface.bulkInsert('products', [
       {
         name: 'Acoustic Guitar',
-        price_in_cents: 5000000,
+        price_in_cents: 50000000,
         stock: 80,
         description: 'High-quality acoustic guitar with a rich sound.',
       },
       {
         name: 'Electric Guitar',
-        price_in_cents: 8000000,
+        price_in_cents: 80000000,
         stock: 50,
         description:
           'Versatile electric guitar suitable for various music styles.',

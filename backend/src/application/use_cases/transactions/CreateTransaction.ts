@@ -66,7 +66,7 @@ export class CreateTransaction
         const payment = await this.createPayment.execute(
           customer,
           item.payment_method_token,
-          item.product_amount,
+          entity.getAmountInCents(),
         );
 
         entity.setReference(payment.getReference()!);
@@ -108,6 +108,7 @@ export class CreateTransaction
       status: domain.getStatus(),
       payment_gateway_transaction_id: domain.getPaymentGatewayTransactionId(),
       reference: domain.getReference(),
+      id: domain.getId() || 0,
     });
   }
 

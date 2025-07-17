@@ -25,6 +25,11 @@ export class CreatePayment implements CreatePaymentPort {
       token: paymentMethodToken,
     });
 
-    return await this.paymentGatewayAdapter.startPayment(payment);
+    const acceptanceToken =
+      await this.paymentGatewayAdapter.getAcceptanceToken();
+    return await this.paymentGatewayAdapter.startPayment(
+      payment,
+      acceptanceToken,
+    );
   }
 }

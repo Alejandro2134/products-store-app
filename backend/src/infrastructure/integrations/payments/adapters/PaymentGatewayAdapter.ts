@@ -2,6 +2,8 @@ import { PaymentGatewayPort } from '@domain/ports/out/PaymentGatewayPort';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import {
+  AcceptanceTokenError,
+  AcceptanceTokenResponse,
   PaymentRequest,
   PaymentResponse,
   PaymentResponseError,
@@ -21,12 +23,37 @@ export class PaymentGatewayAdapter
 {
   constructor(private readonly httpService: HttpService) {}
 
-  async startPayment(paymentInfo: Payment): Promise<Payment> {
+  async getAcceptanceToken(): Promise<string> {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.get<AcceptanceTokenResponse>(
+          `${process.env.PAYMENT_BASE_URL}/v1/merchants/${process.env.PAYMENT_PUBLIC_API_KEY}`,
+        ),
+      );
+
+      return data.data.presigned_acceptance.acceptance_token;
+    } catch (error) {
+      if (
+        axios.isAxiosError(error) &&
+        (error.response?.data as AcceptanceTokenError)?.error
+      ) {
+        const paymentError = error.response?.data as AcceptanceTokenError;
+        console.error(paymentError.error.reason);
+      }
+
+      throw new PaymentError();
+    }
+  }
+
+  async startPayment(
+    paymentInfo: Payment,
+    acceptanceToken: string,
+  ): Promise<Payment> {
     try {
       const { data } = await firstValueFrom(
         this.httpService.post<PaymentResponse, PaymentRequest>(
           `${process.env.PAYMENT_BASE_URL}/v1/transactions`,
-          this.fromDomainToAPITransactions(paymentInfo),
+          this.fromDomainToAPITransactions(paymentInfo, acceptanceToken),
           {
             headers: {
               Authorization: `Bearer ${process.env.PAYMENT_PUBLIC_API_KEY}`,
@@ -42,18 +69,21 @@ export class PaymentGatewayAdapter
         (error.response?.data as PaymentResponseError)?.error
       ) {
         const paymentError = error.response?.data as PaymentResponseError;
-        console.error(paymentError);
+        console.error(paymentError.error.messages);
       }
 
       throw new PaymentError();
     }
   }
 
-  fromDomainToAPITransactions(domain: Payment): PaymentRequest {
+  fromDomainToAPITransactions(
+    domain: Payment,
+    acceptanceToken: string,
+  ): PaymentRequest {
     const reference = randomUUID();
 
     return {
-      acceptance_token: `${process.env.PAYMENT_ACCEPTANCE_TOKEN}`,
+      acceptance_token: acceptanceToken,
       amount_in_cents: domain.getAmount(),
       currency: domain.getCurrency(),
       signature: this.generateSignature(

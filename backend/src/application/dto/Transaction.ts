@@ -17,6 +17,7 @@ export class CreateTransactionDTO {
 }
 
 interface ITransactionDTO {
+  id: number;
   status: string;
   product: IProductDTO;
   customer: ICustomerDTO;
@@ -25,6 +26,7 @@ interface ITransactionDTO {
 }
 
 export class TransactionDTO {
+  id: number;
   status: string;
   product: IProductDTO;
   customer: ICustomerDTO;
@@ -32,6 +34,7 @@ export class TransactionDTO {
   payment_gateway_transaction_id: string;
 
   constructor(item: ITransactionDTO) {
+    this.id = item.id;
     this.customer = item.customer;
     this.product = item.product;
     this.status = item.status;

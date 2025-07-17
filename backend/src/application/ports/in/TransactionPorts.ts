@@ -6,3 +6,7 @@ import {
 export interface CreateTransactionsPort {
   execute(item: CreateTransactionDTO): Promise<TransactionDTO>;
 }
+
+export interface GetTransactionByIdPort {
+  execute(id: number): Promise<TransactionDTO>;
+}
