@@ -16,6 +16,7 @@ async function bootstrap() {
     .addTag('customers')
     .addTag('transactions')
     .addTag('deliveries')
+    .addTag('webhooks')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
