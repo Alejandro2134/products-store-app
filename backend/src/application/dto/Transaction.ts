@@ -23,6 +23,7 @@ interface ITransactionDTO {
   customer: ICustomerDTO;
   reference: string;
   payment_gateway_transaction_id: string;
+  product_amount: number;
 }
 
 export class TransactionDTO {
@@ -32,6 +33,7 @@ export class TransactionDTO {
   customer: ICustomerDTO;
   reference: string;
   payment_gateway_transaction_id: string;
+  product_amount: number;
 
   constructor(item: ITransactionDTO) {
     this.id = item.id;
@@ -40,5 +42,6 @@ export class TransactionDTO {
     this.status = item.status;
     this.reference = item.reference;
     this.payment_gateway_transaction_id = item.payment_gateway_transaction_id;
+    this.product_amount = item.product_amount;
   }
 }

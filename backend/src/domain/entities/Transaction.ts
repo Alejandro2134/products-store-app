@@ -14,6 +14,10 @@ interface ITransaction {
   product?: IProduct;
 }
 
+export interface ITransactionUpdate {
+  status?: string;
+}
+
 export class Transaction {
   private id?: number;
   private customerId: number;
@@ -89,5 +93,26 @@ export class Transaction {
 
   setAmountInCents(amount: number) {
     this.amountInCents = amount;
+  }
+
+  setStatus(
+    status: string,
+  ): { success: true } | { success: false; reason: string } {
+    if (this.status === status) {
+      return {
+        success: false,
+        reason: 'Status is already set to the same value',
+      };
+    }
+
+    if (this.status === 'APPROVED' || this.status === 'REJECTED') {
+      return {
+        success: false,
+        reason: 'Cannot change status from APPROVED or REJECTED',
+      };
+    }
+
+    this.status = status;
+    return { success: true };
   }
 }

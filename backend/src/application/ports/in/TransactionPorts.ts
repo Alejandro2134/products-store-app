@@ -10,3 +10,11 @@ export interface CreateTransactionsPort {
 export interface GetTransactionByIdPort {
   execute(id: number): Promise<TransactionDTO>;
 }
+
+export interface GetTransactionByReferencePort {
+  execute(reference: string, t?: unknown): Promise<TransactionDTO>;
+}
+
+export interface UpdateTransactionStatusPort {
+  execute(item: TransactionDTO, status: string, t?: unknown): Promise<void>;
+}
