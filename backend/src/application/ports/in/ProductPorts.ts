@@ -9,5 +9,10 @@ export interface GetProductByIdPort {
 }
 
 export interface UpdateProductStockPort {
-  execute(item: ProductDTO, quantity: number, t?: unknown): Promise<void>;
+  execute(
+    item: ProductDTO,
+    quantity: number,
+    reduceStock: boolean,
+    t?: unknown,
+  ): Promise<void>;
 }

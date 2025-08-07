@@ -8,6 +8,7 @@ import {
 } from '@infrastructure/persistency/orm/sequelize/mappers/Mapper';
 import { CreationAttributes, FindOptions, Transaction } from 'sequelize';
 import { DatabaseError } from '@application/errors/DatabaseError';
+import { StringFormatUtils } from '@infrastructure/utils/StringFormatUtils';
 
 export class ProductAdapter
   implements
@@ -15,6 +16,8 @@ export class ProductAdapter
     MapperModel<Product, ProductModel>,
     MapperPartialDomain<IProductUpdate, CreationAttributes<ProductModel>>
 {
+  private stringFormatUtils = new StringFormatUtils();
+
   constructor(
     @InjectModel(ProductModel)
     private productModel: typeof ProductModel,
@@ -91,14 +94,10 @@ export class ProductAdapter
     const model: { [attribute: string]: string | number } = {};
 
     for (const [key, value] of Object.entries(domain)) {
-      const snakeKey = this.camelToSnake(key);
+      const snakeKey = this.stringFormatUtils.camelToSnake(key);
       model[snakeKey] = value as string | number;
     }
 
     return model;
-  }
-
-  private camelToSnake(str: string): string {
-    return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
   }
 }

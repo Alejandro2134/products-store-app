@@ -64,4 +64,18 @@ export class Product {
     this.stock -= quantity;
     return { success: true };
   }
+
+  addStock(
+    quantity: number,
+  ): { success: true } | { success: false; reason: string } {
+    if (quantity < 0) {
+      return {
+        success: false,
+        reason: 'Quantity to add must be a positive number',
+      };
+    }
+
+    this.stock += quantity;
+    return { success: true };
+  }
 }

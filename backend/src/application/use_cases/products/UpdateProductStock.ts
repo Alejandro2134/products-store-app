@@ -1,24 +1,29 @@
 import { ProductDTO } from '@application/dto/Product';
 import { BadRequestError } from '@application/errors/BadRequestError';
-import { MapperDTO } from '@application/mappers/Mapper';
+import { ProductMapper } from '@application/mappers/ProductMapper';
 import { UpdateProductStockPort } from '@application/ports/in/ProductPorts';
-import { Product } from '@domain/entities/Product';
 import { ProductPort } from '@domain/ports/out/ProductPort';
 
-export class UpdateProductStock
-  implements UpdateProductStockPort, MapperDTO<Product, ProductDTO>
-{
+export class UpdateProductStock implements UpdateProductStockPort {
+  private productMapper = new ProductMapper();
+
   constructor(private readonly productAdapter: ProductPort) {}
 
   async execute(
     item: ProductDTO,
     quantity: number,
+    reduceStock: boolean,
     t?: unknown,
   ): Promise<void> {
-    const product = this.fromDTOToDomain(item);
-    const res = product.reduceStock(quantity);
+    const product = this.productMapper.fromDTOToDomain(item);
 
-    if (!res.success) throw new BadRequestError(res.reason);
+    if (reduceStock) {
+      const res = product.reduceStock(quantity);
+      if (!res.success) throw new BadRequestError(res.reason);
+    } else {
+      const res = product.addStock(quantity);
+      if (!res.success) throw new BadRequestError(res.reason);
+    }
 
     await this.productAdapter.updateById(
       product.getId(),
@@ -27,16 +32,5 @@ export class UpdateProductStock
       },
       t,
     );
-  }
-
-  fromDTOToDomain(dto: ProductDTO): Product {
-    return new Product({
-      currency: dto.currency,
-      description: dto.description,
-      name: dto.name,
-      priceInCents: dto.price_in_cents,
-      stock: dto.stock,
-      id: dto.id || 0,
-    });
   }
 }

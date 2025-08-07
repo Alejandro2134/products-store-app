@@ -1,27 +1,14 @@
-import { ProductDTO } from '@application/dto/Product';
-import { MapperDomain } from '@application/mappers/Mapper';
+import { ProductMapper } from '@application/mappers/ProductMapper';
 import { GetProductsPort } from '@application/ports/in/ProductPorts';
-import { Product } from '@domain/entities/Product';
 import { ProductPort } from '@domain/ports/out/ProductPort';
 
-export class GetProducts
-  implements GetProductsPort, MapperDomain<Product, ProductDTO>
-{
+export class GetProducts implements GetProductsPort {
+  private productMapper = new ProductMapper();
+
   constructor(private readonly productAdapter: ProductPort) {}
 
   async execute() {
     const products = await this.productAdapter.findAll();
-    return products.map(this.fromDomainToDTO);
-  }
-
-  fromDomainToDTO(this: void, domain: Product): ProductDTO {
-    return new ProductDTO({
-      id: domain.getId(),
-      description: domain.getDescription(),
-      name: domain.getName(),
-      price_in_cents: domain.getPriceInCents(),
-      stock: domain.getStock(),
-      currency: domain.getCurrency(),
-    });
+    return products.map(this.productMapper.fromDomainToDTO);
   }
 }
