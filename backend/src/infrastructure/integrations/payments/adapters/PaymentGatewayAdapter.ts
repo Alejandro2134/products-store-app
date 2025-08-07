@@ -10,10 +10,12 @@ import {
 } from '@infrastructure/integrations/payments/api/PaymentAPI';
 import { Mapper } from '@infrastructure/integrations/payments/mappers/Mapper';
 import { Payment } from '@domain/entities/Payment';
-import { randomUUID, createHash } from 'crypto';
+import { randomUUID } from 'crypto';
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
+import { isAxiosError } from 'axios';
 import { PaymentError } from '@application/errors/PaymentError';
+import { SecurityUtilPorts } from '@application/ports/in/SecurityUtilPorts';
+import { SecurityUtils } from '@infrastructure/utils/SecurityUtils';
 
 @Injectable()
 export class PaymentGatewayAdapter
@@ -21,7 +23,11 @@ export class PaymentGatewayAdapter
     PaymentGatewayPort,
     Mapper<Payment, PaymentRequest, PaymentResponse>
 {
-  constructor(private readonly httpService: HttpService) {}
+  private readonly securityUtils: SecurityUtilPorts;
+
+  constructor(private readonly httpService: HttpService) {
+    this.securityUtils = new SecurityUtils();
+  }
 
   async getAcceptanceToken(): Promise<string> {
     try {
@@ -34,7 +40,7 @@ export class PaymentGatewayAdapter
       return data.data.presigned_acceptance.acceptance_token;
     } catch (error) {
       if (
-        axios.isAxiosError(error) &&
+        isAxiosError(error) &&
         (error.response?.data as AcceptanceTokenError)?.error
       ) {
         const paymentError = error.response?.data as AcceptanceTokenError;
@@ -65,7 +71,7 @@ export class PaymentGatewayAdapter
       return this.fromAPITransactionsToDomain(data);
     } catch (error) {
       if (
-        axios.isAxiosError(error) &&
+        isAxiosError(error) &&
         (error.response?.data as PaymentResponseError)?.error
       ) {
         const paymentError = error.response?.data as PaymentResponseError;
@@ -86,11 +92,12 @@ export class PaymentGatewayAdapter
       acceptance_token: acceptanceToken,
       amount_in_cents: domain.getAmount(),
       currency: domain.getCurrency(),
-      signature: this.generateSignature(
+      signature: this.securityUtils.generateHash([
         reference,
-        domain.getAmount(),
+        domain.getAmount().toString(),
         domain.getCurrency(),
-      ),
+        process.env.PAYMENT_INTEGRITY_SECRET!,
+      ]),
       customer_email: domain.getCustomerEmail(),
       customer_data: {
         full_name: domain.getCustomerFullName(),
@@ -127,10 +134,5 @@ export class PaymentGatewayAdapter
       id: api.data.id,
       reference: api.data.reference,
     });
-  }
-
-  generateSignature(reference: string, amount: number, currency: string) {
-    const data = `${reference}${amount}${currency}${process.env.PAYMENT_INTEGRITY_SECET}`;
-    return createHash('sha256').update(data).digest('hex');
   }
 }
