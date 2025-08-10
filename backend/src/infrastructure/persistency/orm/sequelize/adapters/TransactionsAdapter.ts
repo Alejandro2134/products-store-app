@@ -60,10 +60,11 @@ export class TransactionAdapter
     }
   }
 
-  async findById(id: number): Promise<Transaction | null> {
+  async findById(id: number, t?: DBTransaction): Promise<Transaction | null> {
     try {
       const transaction = await this.transactionModel.findByPk(id, {
         include: [Customer, Product],
+        transaction: t,
       });
       if (transaction) return this.fromModelToDomain(transaction);
       return transaction;

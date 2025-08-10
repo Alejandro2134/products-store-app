@@ -8,7 +8,7 @@ export interface CreateTransactionsPort {
 }
 
 export interface GetTransactionByIdPort {
-  execute(id: number): Promise<TransactionDTO>;
+  execute(id: number, t?: unknown): Promise<TransactionDTO>;
 }
 
 export interface GetTransactionByReferencePort {

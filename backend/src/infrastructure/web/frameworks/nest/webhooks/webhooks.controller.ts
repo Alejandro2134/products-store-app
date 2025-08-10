@@ -1,7 +1,9 @@
 import { TransactionUpdatedDTO } from '@application/dto/Webhooks';
 import { TransactionUpdatedPort } from '@application/ports/in/WebhookPorts';
 import { TransactionUpdated } from '@application/use_cases/webhooks/TransactionUpdated';
+import { CustomerAdapter } from '@infrastructure/persistency/orm/sequelize/adapters/CustomerAdapter';
 import { DBTransactionAdapter } from '@infrastructure/persistency/orm/sequelize/adapters/DBTransactionAdapter';
+import { DeliveryAdapter } from '@infrastructure/persistency/orm/sequelize/adapters/DeliveryAdapter';
 import { ProductAdapter } from '@infrastructure/persistency/orm/sequelize/adapters/ProductAdapter';
 import { TransactionAdapter } from '@infrastructure/persistency/orm/sequelize/adapters/TransactionsAdapter';
 import { SecurityUtils } from '@infrastructure/utils/SecurityUtils';
@@ -18,12 +20,16 @@ export class WebhooksController {
     transactionAdapter: TransactionAdapter,
     productAdapter: ProductAdapter,
     dbTransactionAdapter: DBTransactionAdapter,
+    deliveryAdapter: DeliveryAdapter,
+    customerAdapter: CustomerAdapter,
   ) {
     this.transactionUpdated = new TransactionUpdated(
       securityUtils,
       transactionAdapter,
       productAdapter,
       dbTransactionAdapter,
+      deliveryAdapter,
+      customerAdapter,
     );
   }
 

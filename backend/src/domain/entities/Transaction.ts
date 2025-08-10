@@ -1,7 +1,7 @@
 import { ICustomer } from '@domain/entities/Customer';
 import { IProduct } from '@domain/entities/Product';
 
-interface ITransaction {
+export interface ITransaction {
   id?: number;
   customerId: number;
   productId: number;

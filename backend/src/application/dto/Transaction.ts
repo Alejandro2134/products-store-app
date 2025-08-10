@@ -16,7 +16,7 @@ export class CreateTransactionDTO {
   product_amount: number;
 }
 
-interface ITransactionDTO {
+export interface ITransactionDTO {
   id: number;
   status: string;
   product: IProductDTO;

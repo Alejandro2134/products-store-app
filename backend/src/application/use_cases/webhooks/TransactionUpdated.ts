@@ -17,18 +17,25 @@ import { UpdateProductStock } from '../products/UpdateProductStock';
 import { ProductPort } from '@domain/ports/out/ProductPort';
 import { DBTransactionPort } from '@domain/ports/out/DBTransactionPort';
 import { UpdateTransactionStatus } from '../transactions/UpdateTransactionStatus';
+import { CreateDeliveryPort } from '@application/ports/in/DeliveryPorts';
+import { CreateDelivery } from '../deliveries/CreateDelivery';
+import { DeliveryPort } from '@domain/ports/out/DeliveryPort';
+import { CustomerPort } from '@domain/ports/out/CustomerPort';
 
 export class TransactionUpdated implements TransactionUpdatedPort {
   private readonly getTransactionByReference: GetTransactionByReferencePort;
   private readonly verifyIfSignatureIsValid: VerifyIfSignatureIsValidPort;
   private readonly updateProductStock: UpdateProductStockPort;
   private readonly updateTransactionStatus: UpdateTransactionStatusPort;
+  private readonly createDelivery: CreateDeliveryPort;
 
   constructor(
     private readonly securityUtils: SecurityUtilPorts,
     private readonly transactionAdapter: TransactionPort,
     private readonly productAdapter: ProductPort,
     private readonly dbTransactionsAdapter: DBTransactionPort,
+    private readonly deliveryAdapter: DeliveryPort,
+    private readonly customerAdapter: CustomerPort,
   ) {
     this.getTransactionByReference = new GetTransactionByReference(
       this.transactionAdapter,
@@ -39,6 +46,12 @@ export class TransactionUpdated implements TransactionUpdatedPort {
     this.updateProductStock = new UpdateProductStock(this.productAdapter);
     this.updateTransactionStatus = new UpdateTransactionStatus(
       this.transactionAdapter,
+    );
+    this.createDelivery = new CreateDelivery(
+      deliveryAdapter,
+      transactionAdapter,
+      productAdapter,
+      customerAdapter,
     );
   }
 
@@ -55,6 +68,15 @@ export class TransactionUpdated implements TransactionUpdatedPort {
             await this.updateTransactionStatus.execute(
               transaction,
               'APPROVED',
+              t,
+            );
+
+            await this.createDelivery.execute(
+              {
+                customerId: transaction.customer.id!,
+                productId: transaction.product.id!,
+                transactionId: transaction.id,
+              },
               t,
             );
           } else {
