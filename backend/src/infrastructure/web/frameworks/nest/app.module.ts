@@ -10,6 +10,7 @@ import { HttpModule } from '@nestjs/axios';
 import { CustomersModule } from '@infrastructure/web/frameworks/nest/customers/customers.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
+import { DeliveriesModule } from './deliveries/deliveries.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { WebhooksModule } from './webhooks/webhooks.module';
     CustomersModule,
     TransactionsModule,
     WebhooksModule,
+    DeliveriesModule,
   ],
 })
 export class AppModule {}
