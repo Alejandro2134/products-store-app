@@ -1,4 +1,5 @@
 import { CustomerDTO, ICustomerFilter } from '@application/dto/Customer';
+import { CustomerMapper } from '@application/mappers/CustomerMapper';
 import {
   CreateCustomerPort,
   GetCustomersPort,
@@ -12,6 +13,7 @@ import { ApiQuery, ApiTags } from '@nestjs/swagger';
 @ApiTags('customers')
 @Controller('customers')
 export class CustomerController {
+  private readonly customerMapper = new CustomerMapper();
   private readonly createCustomer: CreateCustomerPort;
   private readonly getCustomers: GetCustomersPort;
 
@@ -22,7 +24,9 @@ export class CustomerController {
 
   @Post()
   async create(@Body() customer: CustomerDTO) {
-    return await this.createCustomer.execute(customer);
+    const customerDomain = this.customerMapper.fromDTOToDomain(customer);
+    const res = await this.createCustomer.execute(customerDomain);
+    return this.customerMapper.fromDomainToDTO(res);
   }
 
   @Get()

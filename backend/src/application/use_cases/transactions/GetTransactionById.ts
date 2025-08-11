@@ -1,19 +1,16 @@
-import { TransactionDTO } from '@application/dto/Transaction';
 import { NotFoundError } from '@application/errors/NotFundError';
-import { TransactionMapper } from '@application/mappers/TransactionMapper';
 import { GetTransactionByIdPort } from '@application/ports/in/TransactionPorts';
+import { Transaction } from '@domain/entities/Transaction';
 import { TransactionPort } from '@domain/ports/out/TransactionPort';
 
 export class GetTransactionById implements GetTransactionByIdPort {
-  private transactionMapper = new TransactionMapper();
-
   constructor(private readonly transactionAdapter: TransactionPort) {}
 
-  async execute(id: number): Promise<TransactionDTO> {
+  async execute(id: number): Promise<Transaction> {
     const transaction = await this.transactionAdapter.findById(id);
     if (!transaction)
       throw new NotFoundError(`Transaction with id ${id} not found`);
 
-    return this.transactionMapper.fromDomainToDTO(transaction);
+    return transaction;
   }
 }

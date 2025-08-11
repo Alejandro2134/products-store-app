@@ -12,7 +12,6 @@ export class ProductMapper
       name: dto.name,
       priceInCents: dto.price_in_cents,
       stock: dto.stock,
-      id: dto.id || 0,
     });
   }
 

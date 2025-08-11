@@ -1,4 +1,5 @@
 import { CreateTransactionDTO } from '@application/dto/Transaction';
+import { TransactionMapper } from '@application/mappers/TransactionMapper';
 import {
   CreateTransactionsPort,
   GetTransactionByIdPort,
@@ -16,6 +17,7 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('transactions')
 @Controller('transactions')
 export class TransactionsController {
+  private readonly transactionMapper = new TransactionMapper();
   private readonly createTransaction: CreateTransactionsPort;
   private readonly getTransactionById: GetTransactionByIdPort;
 
@@ -38,7 +40,10 @@ export class TransactionsController {
 
   @Post()
   async create(@Body() transaction: CreateTransactionDTO) {
-    return await this.createTransaction.execute(transaction);
+    const transactionDomain =
+      this.transactionMapper.fromDTOCreateToDomain(transaction);
+    const res = await this.createTransaction.execute(transactionDomain);
+    return this.transactionMapper.fromDomainToDTO(res);
   }
 
   @Get(':id')

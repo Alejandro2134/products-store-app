@@ -1,9 +1,9 @@
-import { CreateDeliveryDTO, DeliveryDTO } from '@application/dto/Delivery';
+import { Delivery } from '@domain/entities/Delivery';
 
 export interface GetDeliveriesPort {
-  execute(): Promise<DeliveryDTO[]>;
+  execute(): Promise<Delivery[]>;
 }
 
 export interface CreateDeliveryPort {
-  execute(item: CreateDeliveryDTO, t?: unknown): Promise<DeliveryDTO>;
+  execute(item: Delivery, t?: unknown): Promise<Delivery>;
 }

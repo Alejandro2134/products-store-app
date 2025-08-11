@@ -1,20 +1,22 @@
-import {
-  CreateTransactionDTO,
-  TransactionDTO,
-} from '@application/dto/Transaction';
+import { Transaction } from '@domain/entities/Transaction';
 
 export interface CreateTransactionsPort {
-  execute(item: CreateTransactionDTO): Promise<TransactionDTO>;
+  execute(item: Transaction): Promise<Transaction>;
 }
 
 export interface GetTransactionByIdPort {
-  execute(id: number, t?: unknown): Promise<TransactionDTO>;
+  execute(id: number, t?: unknown): Promise<Transaction>;
 }
 
 export interface GetTransactionByReferencePort {
-  execute(reference: string, t?: unknown): Promise<TransactionDTO>;
+  execute(reference: string, t?: unknown): Promise<Transaction>;
 }
 
 export interface UpdateTransactionStatusPort {
-  execute(item: TransactionDTO, status: string, t?: unknown): Promise<void>;
+  execute(
+    item: Transaction,
+    id: number,
+    status: string,
+    t?: unknown,
+  ): Promise<void>;
 }

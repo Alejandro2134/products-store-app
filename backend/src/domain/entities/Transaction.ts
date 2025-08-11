@@ -10,6 +10,7 @@ export interface ITransaction {
   amountInCents: number;
   productAmount: number;
   reference: string;
+  paymentMethodToken?: string;
   customer?: ICustomer;
   product?: IProduct;
 }
@@ -29,6 +30,7 @@ export class Transaction {
   private reference: string;
   private customer?: ICustomer;
   private product?: IProduct;
+  private paymentMethodToken?: string;
 
   constructor(item: ITransaction) {
     this.id = item.id;
@@ -41,6 +43,7 @@ export class Transaction {
     this.amountInCents = item.amountInCents;
     this.productAmount = item.productAmount;
     this.reference = item.reference;
+    this.paymentMethodToken = item.paymentMethodToken;
   }
 
   getCustomerId() {
@@ -81,6 +84,10 @@ export class Transaction {
 
   getId() {
     return this.id;
+  }
+
+  getPaymentMethodToken() {
+    return this.paymentMethodToken;
   }
 
   setPaymentGatewayTransactionId(id: string) {

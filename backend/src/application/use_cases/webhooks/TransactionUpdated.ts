@@ -21,6 +21,8 @@ import { CreateDeliveryPort } from '@application/ports/in/DeliveryPorts';
 import { CreateDelivery } from '../deliveries/CreateDelivery';
 import { DeliveryPort } from '@domain/ports/out/DeliveryPort';
 import { CustomerPort } from '@domain/ports/out/CustomerPort';
+import { Delivery } from '@domain/entities/Delivery';
+import { Product } from '@domain/entities/Product';
 
 export class TransactionUpdated implements TransactionUpdatedPort {
   private readonly getTransactionByReference: GetTransactionByReferencePort;
@@ -67,28 +69,37 @@ export class TransactionUpdated implements TransactionUpdatedPort {
           if (item.transaction.status === TransactionStatus.APPROVED) {
             await this.updateTransactionStatus.execute(
               transaction,
+              transaction.getId()!,
               'APPROVED',
               t,
             );
 
             await this.createDelivery.execute(
-              {
-                customerId: transaction.customer.id!,
-                productId: transaction.product.id!,
-                transactionId: transaction.id,
-              },
+              new Delivery({
+                customerId: transaction.getCustomerId(),
+                productId: transaction.getProductId(),
+                transactionId: transaction.getId()!,
+              }),
               t,
             );
           } else {
             await this.updateTransactionStatus.execute(
               transaction,
+              transaction.getId()!,
               'REJECTED',
               t,
             );
 
             await this.updateProductStock.execute(
-              transaction.product,
-              transaction.product_amount,
+              new Product({
+                currency: transaction.getProduct()!.currency,
+                description: transaction.getProduct()!.description,
+                name: transaction.getProduct()!.name,
+                priceInCents: transaction.getProduct()!.priceInCents,
+                stock: transaction.getProduct()!.stock,
+              }),
+              transaction.getProductId(),
+              transaction.getProductAmount(),
               false,
               t,
             );

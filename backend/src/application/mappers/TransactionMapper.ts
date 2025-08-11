@@ -20,6 +20,7 @@ export class TransactionMapper
       paymentGatewayTransactionId: '',
       productAmount: dto.product_amount,
       reference: '',
+      paymentMethodToken: dto.payment_method_token,
     });
   }
 

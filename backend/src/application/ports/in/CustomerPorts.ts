@@ -1,13 +1,13 @@
-import { CustomerDTO, ICustomerFilter } from '@application/dto/Customer';
+import { Customer, ICustomerFilter } from '@domain/entities/Customer';
 
 export interface CreateCustomerPort {
-  execute(item: CustomerDTO): Promise<CustomerDTO>;
+  execute(item: Customer): Promise<Customer>;
 }
 
 export interface GetCustomersPort {
-  execute(filter: ICustomerFilter): Promise<CustomerDTO[]>;
+  execute(filter: ICustomerFilter): Promise<Customer[]>;
 }
 
 export interface GetCustomerByIdPort {
-  execute(id: number, t?: unknown): Promise<CustomerDTO>;
+  execute(id: number, t?: unknown): Promise<Customer>;
 }

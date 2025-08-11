@@ -1,5 +1,5 @@
 export interface IProduct {
-  id: number;
+  id?: number;
   stock: number;
   priceInCents: number;
   name: string;
@@ -12,7 +12,7 @@ export interface IProductUpdate {
 }
 
 export class Product {
-  private id: number;
+  private id?: number;
   private stock: number;
   private priceInCents: number;
   private name: string;
@@ -28,7 +28,7 @@ export class Product {
     this.currency = item.currency;
   }
 
-  getId(): number {
+  getId(): number | undefined {
     return this.id;
   }
 

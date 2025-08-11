@@ -1,16 +1,17 @@
-import { ProductDTO } from '@application/dto/Product';
+import { Product } from '@domain/entities/Product';
 
 export interface GetProductsPort {
-  execute(): Promise<ProductDTO[]>;
+  execute(): Promise<Product[]>;
 }
 
 export interface GetProductByIdPort {
-  execute(id: number, t?: unknown, lock?: boolean): Promise<ProductDTO>;
+  execute(id: number, t?: unknown, lock?: boolean): Promise<Product>;
 }
 
 export interface UpdateProductStockPort {
   execute(
-    item: ProductDTO,
+    item: Product,
+    id: number,
     quantity: number,
     reduceStock: boolean,
     t?: unknown,

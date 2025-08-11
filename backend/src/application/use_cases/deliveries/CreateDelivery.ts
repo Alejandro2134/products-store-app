@@ -1,5 +1,3 @@
-import { CreateDeliveryDTO, DeliveryDTO } from '@application/dto/Delivery';
-import { DeliveryMapper } from '@application/mappers/DeliveryMapper';
 import { CreateDeliveryPort } from '@application/ports/in/DeliveryPorts';
 import { GetProductByIdPort } from '@application/ports/in/ProductPorts';
 import { GetTransactionByIdPort } from '@application/ports/in/TransactionPorts';
@@ -11,9 +9,9 @@ import { GetProductById } from '../products/GetProductById';
 import { GetCustomerById } from '../customers/GetCustomerById';
 import { GetCustomerByIdPort } from '@application/ports/in/CustomerPorts';
 import { GetTransactionById } from '../transactions/GetTransactionById';
+import { Delivery } from '@domain/entities/Delivery';
 
 export class CreateDelivery implements CreateDeliveryPort {
-  private deliveryMapper = new DeliveryMapper();
   private getProductById: GetProductByIdPort;
   private getCustomerById: GetCustomerByIdPort;
   private getTransactionById: GetTransactionByIdPort;
@@ -29,14 +27,12 @@ export class CreateDelivery implements CreateDeliveryPort {
     this.getTransactionById = new GetTransactionById(this.transactionAdapter);
   }
 
-  async execute(item: CreateDeliveryDTO, t?: unknown): Promise<DeliveryDTO> {
-    const entity = this.deliveryMapper.fromDTOCreateToDomain(item);
+  async execute(item: Delivery, t?: unknown): Promise<Delivery> {
+    await this.getProductById.execute(item.getProductId(), t);
+    await this.getCustomerById.execute(item.getCustomerId(), t);
+    await this.getTransactionById.execute(item.getTransactionId(), t);
 
-    await this.getProductById.execute(entity.getProductId(), t);
-    await this.getCustomerById.execute(entity.getCustomerId(), t);
-    await this.getTransactionById.execute(entity.getTransactionId(), t);
-
-    const createdDelivery = await this.deliveryAdapter.create(entity, t);
-    return this.deliveryMapper.fromDomainToDTO(createdDelivery);
+    const createdDelivery = await this.deliveryAdapter.create(item, t);
+    return createdDelivery;
   }
 }
