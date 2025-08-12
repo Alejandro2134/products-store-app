@@ -1,4 +1,4 @@
-import { NotFoundError } from '@application/errors/NotFundError';
+import { NotFoundError } from '@application/errors/NotFoundError';
 import { GetTransactionByIdPort } from '@application/ports/in/TransactionPorts';
 import { Transaction } from '@domain/entities/Transaction';
 import { TransactionPort } from '@domain/ports/out/TransactionPort';

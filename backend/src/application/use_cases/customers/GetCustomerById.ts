@@ -1,4 +1,4 @@
-import { NotFoundError } from '@application/errors/NotFundError';
+import { NotFoundError } from '@application/errors/NotFoundError';
 import { GetCustomerByIdPort } from '@application/ports/in/CustomerPorts';
 import { Customer } from '@domain/entities/Customer';
 import { CustomerPort } from '@domain/ports/out/CustomerPort';

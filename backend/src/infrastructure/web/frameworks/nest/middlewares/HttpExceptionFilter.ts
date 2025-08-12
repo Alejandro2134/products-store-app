@@ -1,6 +1,6 @@
 import { AlreadyExistsError } from '@application/errors/AlreadyExistsError';
 import { BadRequestError } from '@application/errors/BadRequestError';
-import { NotFoundError } from '@application/errors/NotFundError';
+import { NotFoundError } from '@application/errors/NotFoundError';
 import {
   ArgumentsHost,
   Catch,
