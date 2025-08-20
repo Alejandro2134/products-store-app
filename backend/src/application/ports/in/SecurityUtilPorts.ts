@@ -1,3 +1,3 @@
 export interface SecurityUtilPorts {
-  generateHash(data: string[]): string;
+  generateHash(this: void, data: string[]): string;
 }

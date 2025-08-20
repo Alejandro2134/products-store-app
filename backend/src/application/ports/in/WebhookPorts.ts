@@ -1,9 +1,9 @@
-import { TransactionUpdatedDTO } from '@application/dto/Webhooks';
+import { TransactionUpdated } from '@domain/entities/Events';
 
 export interface TransactionUpdatedPort {
-  execute(item: TransactionUpdatedDTO): Promise<void>;
+  execute(item: TransactionUpdated): Promise<void>;
 }
 
 export interface VerifyIfSignatureIsValidPort {
-  isSignatureValid(item: TransactionUpdatedDTO): boolean;
+  isSignatureValid(item: TransactionUpdated): boolean;
 }

@@ -1,4 +1,5 @@
 import { TransactionUpdatedDTO } from '@application/dto/Webhooks';
+import { WebhookMapper } from '@application/mappers/WebhookMapper';
 import { TransactionUpdatedPort } from '@application/ports/in/WebhookPorts';
 import { TransactionUpdated } from '@application/use_cases/webhooks/TransactionUpdated';
 import { CustomerAdapter } from '@infrastructure/persistency/orm/sequelize/adapters/CustomerAdapter';
@@ -13,6 +14,7 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('webhooks')
 @Controller('webhooks')
 export class WebhooksController {
+  private readonly webhookMapper = new WebhookMapper();
   private readonly transactionUpdated: TransactionUpdatedPort;
 
   constructor(
@@ -36,6 +38,8 @@ export class WebhooksController {
   @Post('/payments/transaction-updated')
   @HttpCode(200)
   checkTransactionUpdatedInfo(@Body() transactionInfo: TransactionUpdatedDTO) {
-    return this.transactionUpdated.execute(transactionInfo);
+    const transactionUpdatedDomain =
+      this.webhookMapper.fromDTOToDomain(transactionInfo);
+    return this.transactionUpdated.execute(transactionUpdatedDomain);
   }
 }

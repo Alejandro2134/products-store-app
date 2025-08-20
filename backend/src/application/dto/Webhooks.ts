@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export enum TransactionStatus {
+enum TransactionStatus {
   APPROVED = 'APPROVED',
   PROCESSING = 'PROCESSING',
   PENDING = 'PENDING',
@@ -8,7 +8,7 @@ export enum TransactionStatus {
   REJECTED = 'REJECTED',
 }
 
-export enum WebhookEvent {
+enum WebhookEvent {
   TRANSACTION_UPDATED = 'transaction.updated',
 }
 

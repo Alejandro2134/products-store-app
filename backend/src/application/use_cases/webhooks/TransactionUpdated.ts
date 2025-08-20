@@ -1,10 +1,8 @@
-import { TransactionUpdatedDTO } from '@application/dto/Webhooks';
 import { SecurityUtilPorts } from '@application/ports/in/SecurityUtilPorts';
 import {
   TransactionUpdatedPort,
   VerifyIfSignatureIsValidPort,
 } from '@application/ports/in/WebhookPorts';
-import { TransactionStatus, WebhookEvent } from '@application/dto/Webhooks';
 import { TransactionPort } from '@domain/ports/out/TransactionPort';
 import { GetTransactionByReference } from '../transactions/GetTransactionByReference';
 import {
@@ -23,6 +21,11 @@ import { DeliveryPort } from '@domain/ports/out/DeliveryPort';
 import { CustomerPort } from '@domain/ports/out/CustomerPort';
 import { Delivery } from '@domain/entities/Delivery';
 import { Product } from '@domain/entities/Product';
+import {
+  TransactionUpdated as TransactionUpdatedEvent,
+  Event,
+  TransactionStatus,
+} from '@domain/entities/Events';
 
 export class TransactionUpdated implements TransactionUpdatedPort {
   private readonly getTransactionByReference: GetTransactionByReferencePort;
@@ -57,16 +60,19 @@ export class TransactionUpdated implements TransactionUpdatedPort {
     );
   }
 
-  async execute(item: TransactionUpdatedDTO): Promise<void> {
+  async execute(item: TransactionUpdatedEvent): Promise<void> {
     await this.dbTransactionsAdapter.createTransaction<void>(async (t) => {
-      if (item.event === WebhookEvent.TRANSACTION_UPDATED) {
+      if (item.getEvent() === (Event.TRANSACTION_UPDATED as string)) {
         if (this.verifyIfSignatureIsValid.isSignatureValid(item)) {
           const transaction = await this.getTransactionByReference.execute(
-            item.transaction.reference,
+            item.getTransaction().reference,
             t,
           );
 
-          if (item.transaction.status === TransactionStatus.APPROVED) {
+          if (
+            item.getTransaction().status ===
+            (TransactionStatus.APPROVED as string)
+          ) {
             await this.updateTransactionStatus.execute(
               transaction,
               transaction.getId()!,
